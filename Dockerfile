@@ -5,9 +5,22 @@ ENV SWIFT_PLATFORM ubuntu14.04
 
 # Install related packages
 RUN apt-get update && \
-    apt-get install -y build-essential wget libssl-dev clang libedit-dev python2.7 python2.7-dev libicu52 rsync git libpq-dev libxml2-dev && \
+    apt-get install -y build-essential wget libssl-dev clang libedit-dev python2.7 python2.7-dev libicu52 rsync git libpq-dev libxml2-dev postgresql postgresql-contrib && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+
+USER postgres
+RUN /etc/init.d/postgresql start && \
+    psql -d postgres -c "ALTER USER postgres WITH PASSWORD 'postgres';" && \
+    createdb -O postgres todos
+
+
+USER root
+RUN echo "host all  all    0.0.0.0/0  md5" >> /etc/postgresql/9.3/main/pg_hba.conf
+RUN echo "listen_addresses='*'" >> /etc/postgresql/9.3/main/postgresql.conf
+
+EXPOSE 5432
 
 # Install Swift keys
 RUN wget -q -O - https://swift.org/keys/all-keys.asc | gpg --import - && \
@@ -53,4 +66,4 @@ RUN swift build
 
 EXPOSE 8080
 
-CMD .build/debug/Todo
+CMD /etc/init.d/postgresql start && .build/debug/Todo
