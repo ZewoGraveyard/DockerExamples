@@ -1,6 +1,6 @@
 FROM ubuntu:14.04
 
-ENV SWIFT_VERSION 2.2-SNAPSHOT-2015-12-31-a
+ENV SWIFT_VERSION 2.2-SNAPSHOT-2016-01-11-a
 ENV SWIFT_PLATFORM ubuntu14.04
 
 # Install related packages
@@ -55,7 +55,7 @@ RUN git clone https://github.com/Zewo/uri_parser.git && cd uri_parser && \
     make package && \
     dpkg -i uri_parser.deb
 
-RUN mkdir -p /var/app
+RUN mkdir -p /var/app /workspace
 WORKDIR /var/app/
 
 RUN git clone https://github.com/Zewo/Examples.git
