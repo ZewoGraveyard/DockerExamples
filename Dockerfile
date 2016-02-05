@@ -1,6 +1,8 @@
 FROM ubuntu:14.04
 
-ENV SWIFT_VERSION 2.2-SNAPSHOT-2015-12-31-a
+ENV SWIFT_BRANCH branch
+ENV SWIFT_VERSION 2.2
+ENV SWIFT_SNAPSHOT SNAPSHOT-2016-01-25-a
 ENV SWIFT_PLATFORM ubuntu14.04
 
 # Install related packages
@@ -27,8 +29,8 @@ RUN wget -q -O - https://swift.org/keys/all-keys.asc | gpg --import - && \
     gpg --keyserver hkp://pool.sks-keyservers.net --refresh-keys Swift
 
 # Install Swift Ubuntu 14.04 Snapshot
-RUN SWIFT_ARCHIVE_NAME=swift-$SWIFT_VERSION-$SWIFT_PLATFORM && \
-    SWIFT_URL=https://swift.org/builds/$(echo "$SWIFT_PLATFORM" | tr -d .)/swift-$SWIFT_VERSION/$SWIFT_ARCHIVE_NAME.tar.gz && \
+RUN SWIFT_ARCHIVE_NAME=swift-$SWIFT_VERSION-$SWIFT_SNAPSHOT-$SWIFT_PLATFORM && \
+    SWIFT_URL=https://swift.org/builds/swift-$SWIFT_VERSION-$SWIFT_BRANCH/$(echo "$SWIFT_PLATFORM" | tr -d .)/swift-$SWIFT_VERSION-$SWIFT_SNAPSHOT/$SWIFT_ARCHIVE_NAME.tar.gz && \
     wget $SWIFT_URL && \
     wget $SWIFT_URL.sig && \
     gpg --verify $SWIFT_ARCHIVE_NAME.tar.gz.sig && \
@@ -55,7 +57,7 @@ RUN git clone https://github.com/Zewo/uri_parser.git && cd uri_parser && \
     make package && \
     dpkg -i uri_parser.deb
 
-RUN mkdir -p /var/app
+RUN mkdir -p /var/app /workspace
 WORKDIR /var/app/
 
 RUN git clone https://github.com/Zewo/Examples.git
